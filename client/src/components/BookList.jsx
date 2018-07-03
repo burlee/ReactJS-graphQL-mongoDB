@@ -1,21 +1,13 @@
 import React, { Component } from 'react'
 import './BookList.css'
-import {gql} from 'apollo-boost'
 import { graphql } from 'react-apollo'
+import { getBooks } from '../queries/queries'
 
-const getBooks = gql`
-{
-  books{
-    name,
-    id,
-    genre
-  }
-}
-`
+
 
 class BookList extends Component {
   state = {
-    books: []
+    
   }
 
   booksHandler(){

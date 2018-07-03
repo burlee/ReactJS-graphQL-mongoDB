@@ -1,55 +1,63 @@
 import './BookList.css';
-import { graphql } from 'react-apollo'
-import { gql } from 'apollo-boost';
+import { graphql, compose } from 'react-apollo'
 import React, { Component } from 'react';
+import {getAuthors, addBookMutation } from '../queries/queries'
 
-const getAuthors = gql`
-{
-    authors{
-      name,age, id
+
+class AddBook extends Component {
+    state = {
+        name: '',
+        genre: '',
+        authorId:''
     }
-  }
-`
 
-class Authors extends Component {
+    
     displayAuthors(){
         var data = this.props.data;
         if(data.loading){
-            return(<option disabled>Ładowanie autorow </option>)
+            return(<option disabled>---</option>)
         }else{
-            return data.authors.map( autor => {
-                return(<option key={autor.id}>{autor.name}</option>)
+            return data.authors.map( author => {
+                return(<option key={author.id} value={author.id}>{author.name}</option>)
             })
         }
     }
 
+    submitForm = (event) => {
+        event.preventDefault();
+        console.log(this.state)
+    }
     render() {
-      console.log(this.props)
+      console.log(this.props.data.authors)
       return (
-        <form id="add-book">
+        <form id="add-book" onSubmit={this.submitForm}>
 
             <div className="field">
                 <label>Tytuł książki:</label>
-                <input type="text"/>
+                <input type="text" onChange={(e)=> this.setState({name: e.target.value})}/>
             </div>
 
             <div className="field">
                 <label>Gatunek:</label>
-                <input type="text"/>
+                <input type="text" onChange={(e)=> this.setState({genre: e.target.value})}/>
             </div>
 
             <div className="field">
                 <label>Autor:</label>
-                <select>
+                <select onChange={(e)=> this.setState({authorId: e.target.value})} >
                     <option>Wybierz autora</option>
                     {this.displayAuthors()}
                 </select>
             </div>
 
+            <button>+</button>
 
         </form>
       )
     }
   }
 
-  export default graphql(getAuthors)(Authors);
+  export default compose(
+      graphql(getAuthors, {name: "getAuthors"}),
+      graphql(addBookMutation, {name: "addBookMutation"})
+  )(AddBook);
