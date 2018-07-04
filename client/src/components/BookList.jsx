@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import './BookList.css'
 import { graphql } from 'react-apollo'
 import { getBooks } from '../queries/queries'
-
+import BookDetails from './BookDetails';
 
 
 class BookList extends Component {
   state = {
-    
+    bookId: null
   }
 
   booksHandler(){
@@ -16,7 +16,7 @@ class BookList extends Component {
       return <p> loading books... </p>
     }else{
       return fetchBooks.books.map( book => {
-        return <li key={book.id}> {book.name} </li>
+        return <li onClick={() =>this.setState({bookId: book.id})} key={book.id}> {book.name} </li>
       }) 
     }
   }
@@ -26,8 +26,9 @@ class BookList extends Component {
     return (
       <div>
         <ul id="book-list">
-            <li>{this.booksHandler()}</li>
+            <li >{this.booksHandler()}</li>
         </ul>
+        <BookDetails bookId={this.state.bookId} />
       </div>
     )
   }
